@@ -1,4 +1,12 @@
-import trainer_funcs 
+from utils import trainer_funcs 
+import optuna
+from transformers import AutoModelForSequenceClassification
+from transformers import Trainer, TrainingArguments
+
+class bcolors:
+    okblue = '\033[094'
+    blue = '\033[34m'
+    endc = '\033[0m'
 
 class Objective:
   def __init__(self, config, tokenizer, data_collator, tokenized_datasets):
@@ -50,13 +58,13 @@ class Objective:
                                       per_device_eval_batch_size=32,
                                       save_strategy = 'no',
                                       disable_tqdm=False,
-                                      log_level=self.config['logger_transformers)']
+                                      log_level=self.config['logger_transformers'])
                                         
     trainer = Trainer(args=training_args,
-                      tokenizer=tokenizer,
-                      data_collator= data_collator,
-                      train_dataset=tokenized_datasets['train'],
-                      eval_dataset=tokenized_datasets['val'],
+                      tokenizer=self.tokenizer,
+                      data_collator= self.data_collator,
+                      train_dataset=self.tokenized_datasets['train'],
+                      eval_dataset=self.tokenized_datasets['val'],
                       model_init=model_init,
                       compute_metrics=trainer_funcs.compute_metrics)
                         

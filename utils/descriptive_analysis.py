@@ -38,7 +38,7 @@ def study_std(data_train):
     print('\n\n') 
     plt.show()
     
-def probability_clickbait_per_words_clickbait(data_train):
+def probability_clickbait_per_tweet_count_words(data_train):
     tweets_clickbaits = data_train['postText'].mask(data_train['truthClass']==0).dropna().reset_index(drop=True).str.split()
     tweets_noclickbaits = data_train['postText'].mask(data_train['truthClass']==1).dropna().reset_index(drop=True).str.split()
     assert tweets_clickbaits.shape[0] + tweets_noclickbaits.shape[0] == data_train.shape[0], 'Error, hay etiquetas diferentes de \'clickbait\' y \'no-clickbait\''
