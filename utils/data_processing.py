@@ -6,8 +6,6 @@ def process_file(data_dir):
   data = pd.read_csv(data_dir)
   data.loc[data['truthClass'] == 'clickbait', 'truthClass'] = 1
   data.loc[data['truthClass'] == 'no-clickbait', 'truthClass'] = 0
-   #'truthClass'][data['truthClass'] == 'clickbait'] = 1
-  #data['truthClass'][data['truthClass'] == 'no-clickbait'] = 0
 
   for n in data.columns:
     data.loc[data[n].isna(), n] = ''
