@@ -17,12 +17,12 @@ def process_file(data_dir, inputs):
     feature.append('')
     for label in inputs:
       feature[i] += data[label][i]
-      feature[i] += '[SEP]' # Esto es trampita y tengo que buscar el token de cada arquitectura
+      feature[i] += '[SEP]' # No es del todo correcto, debería llamar al token concreto del tokenizador
   data['feature'] = feature
 
   return data
 
-def to_Dataset(dataset, clip=[0,0], split=False, train_val_split = 0):
+def to_Dataset(dataset, train_data=False, clip=[0,0], train_val_split = 0):
   
   def clip_dataset_mean(dataset):
     return dataset[(dataset['truthMean']<clip[0]) | (dataset['truthMean']>=clip[1])].reset_index(drop=True)

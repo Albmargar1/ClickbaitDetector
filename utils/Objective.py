@@ -11,7 +11,8 @@ class bcolors:
 
 class Objective:
   def __init__(self, 
-              config, tokenizer, 
+              config, 
+              tokenizer, 
               data_collator, 
               tokenized_datasets,
               prop_clickbait):
@@ -21,13 +22,14 @@ class Objective:
     self.tokenizer = tokenizer
     self.data_collator = data_collator
     self.tokenized_datasets = tokenized_datasets
-    self.metric = load_metric("glue", "mrpc")
-    self.weights = [prop_clickbait/(1+prop_clickbait),
-                    1/(1+prop_clickbait)]
+    self.metric = load_metric("glue", "mrpc") # Incluye F1 y Accuracy
+    self.loss_weights = [prop_clickbait/(1+prop_clickbait),
+                        1/(1+prop_clickbait)]
 
   def __call__(self, trial: optuna.Trial):     
   
-    # Mejorable
+    # Mejorable, he tenido que definir estas funciones dentro porque no sé
+    # cómo gestionarlo desde fuera
     checkpoint = self.config['checkpoint']
     def model_init():
         return AutoModelForSequenceClassification.from_pretrained(
@@ -53,8 +55,8 @@ class Objective:
                                                 hp['batch_size_train'])
       
     print(bcolors.blue, 
-          '\nPrueba', trial.number, 'de', self.config['n_trials'],
-          '\nHiperparámetros para', self.config['checkpoint'],':', 
+          '\nPrueba', trial.number+1, 'de', self.config['n_trials'],
+          '\nHiperparámetros para', self.config['checkpoint'], 
           '\nlearning_rate:', learning_rate,
           '\nepochs:', epochs, 
           '\nbatch_size_train:', batch_size_train, 
@@ -78,15 +80,14 @@ class Objective:
                             model_init=model_init,
                             compute_metrics=compute_metrics)
 
-    trainer.set_loss_weights(self.weights)
-                        
+    trainer.set_loss_weights(self.loss_weights) 
           
     result = trainer.train()
 
     eval_result = trainer.evaluate()     
     print(bcolors.blue, 
-         '\n F1-score en test', trial.number, '=', eval_result['eval_f1'],
-         '\n Accuracy en test', trial.number, '=', eval_result['eval_accuracy'], 
+         '\n F1-score para datos de validación en test', trial.number+1, '=', eval_result['eval_f1'],
+         '\n Accuracy para datos de validación en test', trial.number+1, '=', eval_result['eval_accuracy'], 
          '\n', bcolors.endc)
 
     self.trainer = trainer
