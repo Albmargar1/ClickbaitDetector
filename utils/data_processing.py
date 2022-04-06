@@ -2,31 +2,32 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import datasets
 
-def process_file(data_dir):
+def process_file(data_dir, inputs):
   data = pd.read_csv(data_dir)
-  data.loc[data['truthClass'] == 'clickbait', 'truthClass'] = 1
-  data.loc[data['truthClass'] == 'no-clickbait', 'truthClass'] = 0
+  data.rename(columns = {'truthClass':'labels'}, inplace = True)
+
+  data.loc[data['labels'] == 'clickbait', 'truthClass'] = 1
+  data.loc[data['labels'] == 'no-clickbait', 'truthClass'] = 0
 
   for n in data.columns:
     data.loc[data[n].isna(), n] = ''
 
+  feature = []
+  for i in range(data.shape[0]):
+    feature.append('')
+    for label in inputs:
+      feature[i] += data[label][i]
+      feature[i] += '[SEP]' # Esto es trampita y tengo que buscar el token de cada arquitectura
+  data['feature'] = feature
+
   return data
 
-def to_Dataset(dataset, inputs, clip=[0,0], split=False, train_val_split = 0):
+def to_Dataset(dataset, clip=[0,0], split=False, train_val_split = 0):
+  
   def clip_dataset_mean(dataset):
     return dataset[(dataset['truthMean']<clip[0]) | (dataset['truthMean']>=clip[1])].reset_index(drop=True)
 
-  dataset.rename(columns = {'truthClass':'labels'}, inplace = True)
-
   # Add inputs together
-  feature = []
-  for i in range(dataset.shape[0]):
-    feature.append('')
-    for label in inputs:
-      feature[i] += dataset[label][i]
-      feature[i] += '[SEP]' # Esto es trampita y tengo que buscar el token de cada arquitectura
-  dataset['feature'] = feature
-
   if split:
     train, val = train_test_split(dataset, test_size=train_val_split)
   else:

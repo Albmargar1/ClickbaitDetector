@@ -45,10 +45,6 @@ class Objective:
                                             low=hp['learning_rate'][0], 
                                             high=hp['learning_rate'][1])
       
-    weight_decay = trial.suggest_loguniform('weight_decay', 
-                                            low=hp['weight_decay'][0], 
-                                            high=hp['weight_decay'][1])
-      
     epochs = trial.suggest_int('epochs', 
                               low=hp['epochs'][0], 
                               high=hp['epochs'][1])
@@ -57,20 +53,20 @@ class Objective:
                                                 hp['batch_size_train'])
       
     print(bcolors.blue, 
-          '\nHiperparámetros test', trial.number,
-          '\nlearning_rate:', learning_rate, 
-          '\nweight_decay:', weight_decay, 
+          '\nPrueba', trial.number, 'de', self.config['n_trials'],
+          '\nHiperparámetros para', self.config['checkpoint'],':', 
+          '\nlearning_rate:', learning_rate,
           '\nepochs:', epochs, 
           '\nbatch_size_train:', batch_size_train, 
           bcolors.endc)
 
     training_args = TrainingArguments(output_dir='test',
                                       learning_rate=learning_rate,         
-                                      #weight_decay=weight_decay,         
                                       num_train_epochs=epochs,         
                                       per_device_train_batch_size=batch_size_train, 
                                       per_device_eval_batch_size=32,
                                       save_strategy = 'no',
+                                      evaluation_strategy = 'epoch',
                                       disable_tqdm=False,
                                       log_level=self.config['logger_transformers'])
                                         
