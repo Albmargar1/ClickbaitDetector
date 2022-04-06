@@ -30,16 +30,12 @@ def to_Dataset(dataset, clip=[0,0], split=False, train_val_split = 0):
   # Add inputs together
   if split:
     train, val = train_test_split(dataset, test_size=train_val_split)
-  else:
-    train = dataset
-
-  train = clip_dataset_mean(train)
-
-  if split:
+    train = clip_dataset_mean(train)
     data_dic = datasets.DatasetDict({'train': datasets.Dataset.from_pandas(train),
                                      'val': datasets.Dataset.from_pandas(val)})
   else:
-    data_dic = datasets.DatasetDict({'train': datasets.Dataset.from_pandas(train)})
+    test = dataset
+    data_dic = datasets.DatasetDict({'test': datasets.Dataset.from_pandas(test)})    
 
   return data_dic
 
