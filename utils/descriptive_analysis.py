@@ -6,13 +6,13 @@ from utils.bcolors import bcolors
 
 plt.rcParams['font.size'] = '13' # Font size in matplotlib figures
 
-def overall_info(data_train):
-    legit_tweets = data_train[data_train['labels'] == 0]
-    clickbait_tweets = data_train[data_train['labels'] == 1]
+def overall_info(data):
+    legit_tweets = data[data['labels'] == 0]
+    clickbait_tweets = data[data['labels'] == 1]
 
     legit_count = legit_tweets.shape[0]
     clickbait_count = clickbait_tweets.shape[0]
-    bad_labeled_count = data_train.shape[0] - (legit_count + clickbait_count)
+    bad_labeled_count = data.shape[0] - (legit_count + clickbait_count)
     clickbait_proportion = clickbait_count/(clickbait_count + legit_count+bad_labeled_count)
 
     print(bcolors.blue,
@@ -21,9 +21,12 @@ def overall_info(data_train):
           '\nTweets mal etiquetados:', bad_labeled_count,
           '\nProporción tweets clickbait:', clickbait_proportion, 
           bcolors.endc)
+    
+    data.describe()
+    data.info()
           
-def study_std(data_train): 
-    truth_judgments = [eval(row) for row in data_train['truthJudgments']]
+def study_std(data): 
+    truth_judgments = [eval(row) for row in data['truthJudgments']]
     truth_judgments = np.array(truth_judgments)
     truth_mean = np.mean(truth_judgments, axis=1)
     truth_std = np.std(truth_judgments, axis=1)
@@ -34,10 +37,10 @@ def study_std(data_train):
     print('\n\n') 
     plt.show()
     
-def probability_clickbait_per_tweet_count_words(data_train):
-    tweets_clickbaits = data_train['postText'].mask(data_train['labels']==0).dropna().reset_index(drop=True).str.split()
-    tweets_noclickbaits = data_train['postText'].mask(data_train['labels']==1).dropna().reset_index(drop=True).str.split()
-    assert tweets_clickbaits.shape[0] + tweets_noclickbaits.shape[0] == data_train.shape[0], 'Error, hay etiquetas diferentes de \'clickbait\' y \'no-clickbait\''
+def probability_clickbait_per_tweet_count_words(data):
+    tweets_clickbaits = data['postText'].mask(data['labels']==0).dropna().reset_index(drop=True).str.split()
+    tweets_noclickbaits = data['postText'].mask(data['labels']==1).dropna().reset_index(drop=True).str.split()
+    assert tweets_clickbaits.shape[0] + tweets_noclickbaits.shape[0] == data.shape[0], 'Error, hay etiquetas diferentes de \'clickbait\' y \'no-clickbait\''
 
     clickbaits_word_len = list(tweets_clickbaits.str.len())
     noclickbaits_word_len = list(tweets_noclickbaits.str.len())
@@ -45,7 +48,7 @@ def probability_clickbait_per_tweet_count_words(data_train):
 
     dic_clickbaits_word_freq = {i: clickbaits_word_len.count(i) for i in range(max_tweet_word_len+1)}
     dic_noclickbaits_word_freq = {i: noclickbaits_word_len.count(i) for i in range(max_tweet_word_len+1)}
-    assert sum(dic_clickbaits_word_freq.values()) + sum(dic_noclickbaits_word_freq.values()) == data_train.shape[0], 'Error al contabilizar frecuencias'
+    assert sum(dic_clickbaits_word_freq.values()) + sum(dic_noclickbaits_word_freq.values()) == data.shape[0], 'Error al contabilizar frecuencias'
 
     x = dic_clickbaits_word_freq.keys()
     dic_tweets_word_freq = [dic_clickbaits_word_freq[i] + dic_noclickbaits_word_freq[i] for i in range(max_tweet_word_len+1)]
@@ -69,7 +72,7 @@ def probability_clickbait_per_tweet_count_words(data_train):
     print('\n\n') 
     plt.show()
     
-def given_word_check_probability_clickbait(data_train):
+def given_word_check_probability_clickbait(data):
     def build_frequency(dataframe, column_label):
       counter = Counter()
       dataframe[column_label].str.lower().str.split().apply(counter.update)
@@ -85,10 +88,10 @@ def given_word_check_probability_clickbait(data_train):
     def sigmoid(x):
       return 1/(1 + np.exp(-x))
 
-    legit_tweets = data_train[data_train['labels'] == 0]
-    clickbait_tweets = data_train[data_train['labels'] == 1]
+    legit_tweets = data[data['labels'] == 0]
+    clickbait_tweets = data[data['labels'] == 1]
 
-    vocab_freq = build_frequency(data_train, 'postText')
+    vocab_freq = build_frequency(data, 'postText')
     legit_freq = build_frequency(legit_tweets, 'postText')
     clickbait_freq = build_frequency(clickbait_tweets, 'postText')
       

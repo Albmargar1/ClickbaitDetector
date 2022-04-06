@@ -19,7 +19,6 @@ def process_file(data_dir, inputs):
       feature[i] += data[label][i]
       feature[i] += '[SEP]' # No es del todo correcto, debería llamar al token concreto del tokenizador
   data['feature'] = feature
-  
 
   return data
 
