@@ -1,13 +1,9 @@
 from utils.CustomTrainer import CustomTrainer
+from utils.bcolors import bcolors
 import optuna
 from transformers import AutoModelForSequenceClassification
 from transformers import Trainer, TrainingArguments
 from datasets import load_metric
-
-class bcolors:
-    okblue = '\033[094'
-    blue = '\033[34m'
-    endc = '\033[0m'
 
 class Objective:
   def __init__(self, 

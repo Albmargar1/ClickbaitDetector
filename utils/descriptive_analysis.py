@@ -2,13 +2,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
+from utils.bcolors import bcolors
 
 plt.rcParams['font.size'] = '13' # Font size in matplotlib figures
-
-class bcolors:
-    okblue = '\033[094'
-    blue = '\033[34m'
-    endc = '\033[0m'
 
 def overall_info(data_train):
     legit_tweets = data_train[data_train['labels'] == 0]
