@@ -87,8 +87,6 @@ class Objective:
          '\n', bcolors.endc)
 
     self.trainer = trainer
-    
-    torch.cuda.empty_cache()
 
     return eval_result['eval_f1']
 
