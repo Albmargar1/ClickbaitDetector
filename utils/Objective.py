@@ -62,7 +62,7 @@ class Objective:
                                       learning_rate=learning_rate,         
                                       num_train_epochs=epochs,         
                                       per_device_train_batch_size=batch_size_train, 
-                                      per_device_eval_batch_size=32,
+                                      per_device_eval_batch_size=batch_size_train,
                                       save_strategy = 'no',
                                       evaluation_strategy = 'epoch',
                                       disable_tqdm=False,
