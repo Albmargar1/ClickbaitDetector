@@ -28,7 +28,7 @@ def to_Dataset(dataset, train_data=False, clip=[0,0], train_val_split = 0):
     return dataset[(dataset['truthMean']<clip[0]) | (dataset['truthMean']>=clip[1])].reset_index(drop=True)
 
   # Add inputs together
-  if split:
+  if train_data:
     train, val = train_test_split(dataset, test_size=train_val_split)
     train = clip_dataset_mean(train)
     data_dic = datasets.DatasetDict({'train': datasets.Dataset.from_pandas(train),
