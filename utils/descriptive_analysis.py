@@ -22,7 +22,6 @@ def overall_info(data):
           '\nProporción tweets clickbait:', clickbait_proportion, 
           bcolors.endc)
     
-    data.describe()
     data.info()
           
 def study_std(data): 
